@@ -172,26 +172,24 @@
       });
     }
 
-    // ---------- 添加 ----------
+    // ---------- 添加：展开运算符合并新任务，生成新数组 ----------
     function addTodo(text) {
-      const item = { id: Date.now(), text, completed: false };
-      todos.push(item);
+      todos = [...todos, { id: Date.now(), text, completed: false }];
       save();
       render();
     }
 
-    // ---------- 删除 ----------
+    // ---------- 删除：filter 留下 id 不匹配的，生成新数组 ----------
     function removeTodo(id) {
-      const index = todos.findIndex(t => t.id === id);
-      todos.splice(index, 1);
+      todos = todos.filter(t => t.id !== id);
       save();
       render();
     }
 
-    // ---------- 切换完成状态 ----------
+    // ---------- 切换完成状态：map + 展开，只改匹配的那一条 ----------
     function toggleTodo(id) {
-      const t = todos.find(t => t.id === id);
-      t.completed = !t.completed;
+      todos = todos.map(t =>
+        t.id === id ? { ...t, completed: !t.completed } : t);
       save();
       render();
     }
