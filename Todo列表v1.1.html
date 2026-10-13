@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Todo 列表 · 基础版</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 40px 16px;
+      font-family: system-ui, -apple-system, "Segoe UI", "PingFang SC", sans-serif;
+      background: #f5f6f8;
+      color: #333;
+    }
+
+    .todo-app {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 24px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .todo-app__title {
+      margin: 0 0 20px;
+      font-size: 20px;
+      text-align: center;
+    }
+
+    .todo-input-area {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .todo-input-area__input {
+      flex: 1;
+      padding: 10px 12px;
+      font-size: 15px;
+      border: 1px solid #d9d9d9;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .todo-input-area__input:focus {
+      border-color: #4a90e2;
+    }
+
+    .todo-input-area__btn {
+      padding: 10px 20px;
+      font-size: 15px;
+      color: #fff;
+      background: #4a90e2;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .todo-input-area__btn:hover {
+      background: #3a7bc8;
+    }
+
+    .todo-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .todo-list__item {
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      font-size: 15px;
+      line-height: 1.5;
+      background: #fafafa;
+      border-left: 3px solid #4a90e2;
+      border-radius: 6px;
+      word-break: break-all;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="todo-app">
+    <h1 class="todo-app__title">Todo 列表</h1>
+
+    <!-- 输入区：文本框 + 添加按钮 -->
+    <div class="todo-input-area">
+      <input id="todoInput" class="todo-input-area__input" type="text" placeholder="请输入待办内容" />
+      <button id="addBtn" class="todo-input-area__btn" type="button">添加</button>
+    </div>
+
+    <!-- Todo 列表专属容器 -->
+    <ul id="todoList" class="todo-list"></ul>
+  </div>
+
+  <!-- 脚本置于 body 末尾，保证执行时 DOM 已全部就绪 -->
+  <script>
+    // 用 IIFE 包裹整个脚本，隔离内部变量，避免污染全局作用域
+    (() => {
+      // ---------- 1. 获取并缓存 DOM 元素引用（避免重复查询） ----------
+      const todoInput = document.getElementById('todoInput');
+      const addBtn = document.getElementById('addBtn');
+      const todoList = document.getElementById('todoList');
+
+      // ---------- 2. 核心逻辑：添加一条待办 ----------
+      const handleAddTodo = () => {
+        // 边界校验：trim() 去除首尾空格后为空则直接返回，禁止添加
+        const content = todoInput.value.trim();
+        if (content === '') {
+          return;
+        }
+
+        // 使用 createElement 创建 li 元素
+        const li = document.createElement('li');
+        li.className = 'todo-list__item';
+        // 用 textContent 而非 innerHTML，防止用户输入被解析为 HTML（XSS 安全）
+        li.textContent = content;
+
+        // 通过 appendChild 追加到 ul 容器，完成渲染
+        todoList.appendChild(li);
+
+        // 交互优化：添加成功后清空输入框，并保持焦点便于连续输入
+        todoInput.value = '';
+        todoInput.focus();
+      };
+
+      // ---------- 3. 事件绑定：click 是唯一的添加触发方式 ----------
+      addBtn.addEventListener('click', handleAddTodo);
+    })();
+  </script>
+</body>
+
+</html>
