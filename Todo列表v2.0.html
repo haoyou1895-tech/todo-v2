@@ -149,7 +149,12 @@
     function load() {
       const raw = localStorage.getItem(KEY);
       if (raw === null) return [];
-      return JSON.parse(raw);
+      try {
+        const data = JSON.parse(raw);
+        return Array.isArray(data) ? data : []; // 防御：损坏或非数组时回退空数组
+      } catch (e) {
+        return []; // JSON 解析失败不抛异常，保证页面可恢复
+      }
     }
 
     // ---------- 渲染：根据 todos 重画整个列表 ----------
@@ -165,7 +170,10 @@
 
         const delBtn = document.createElement('button');
         delBtn.textContent = '×';
-        delBtn.addEventListener('click', () => removeTodo(t.id));
+        delBtn.addEventListener('click', (e) => {
+          e.stopPropagation(); // 阻止冒泡，避免点删除时顺带触发 li 的切换
+          removeTodo(t.id);
+        });
         li.appendChild(delBtn);
 
         list.appendChild(li);
