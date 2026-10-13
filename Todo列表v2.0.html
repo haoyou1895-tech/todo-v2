@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Todo 列表 · V2.0 数据驱动版</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 40px 16px;
+      font-family: system-ui, -apple-system, "Segoe UI", "PingFang SC", sans-serif;
+      background: #f5f6f8;
+      color: #333;
+    }
+
+    .todo-app {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 24px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .todo-app__title {
+      margin: 0 0 20px;
+      font-size: 20px;
+      text-align: center;
+    }
+
+    .todo-input-area {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .todo-input-area__input {
+      flex: 1;
+      padding: 10px 12px;
+      font-size: 15px;
+      border: 1px solid #d9d9d9;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .todo-input-area__input:focus {
+      border-color: #4a90e2;
+    }
+
+    .todo-input-area__btn {
+      padding: 10px 20px;
+      font-size: 15px;
+      color: #fff;
+      background: #4a90e2;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .todo-input-area__btn:hover {
+      background: #3a7bc8;
+    }
+
+    .todo-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .todo-list__item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      font-size: 15px;
+      line-height: 1.5;
+      background: #fafafa;
+      border-left: 3px solid #4a90e2;
+      border-radius: 6px;
+      cursor: pointer;
+      word-break: break-all;
+    }
+
+    /* 已完成状态：淡化显示 */
+    .todo-list__item.done {
+      opacity: 0.55;
+    }
+
+    .todo-list__del {
+      flex-shrink: 0;
+      margin-left: 12px;
+      width: 22px;
+      height: 22px;
+      font-size: 14px;
+      line-height: 1;
+      color: #999;
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .todo-list__del:hover {
+      color: #fff;
+      background: #e74c3c;
+      border-color: #e74c3c;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="todo-app">
+    <h1 class="todo-app__title">Todo 列表 · V2.0</h1>
+
+    <!-- 输入区：文本框 + 添加按钮 -->
+    <div class="todo-input-area">
+      <input id="todo-input" class="todo-input-area__input" type="text" placeholder="请输入待办内容" />
+      <button id="add-btn" class="todo-input-area__btn" type="button">添加</button>
+    </div>
+
+    <!-- Todo 列表专属容器：所有 li 均由 render() 生成 -->
+    <ul id="todo-list" class="todo-list"></ul>
+  </div>
+
+  <!-- 脚本置于 body 末尾，保证执行时 DOM 已全部就绪 -->
+  <script>
+    // ---------- 常量与 DOM 引用 ----------
+    const KEY = 'todos';
+    const list = document.querySelector('#todo-list');
+    const input = document.querySelector('#todo-input');
+    const addBtn = document.querySelector('#add-btn');
+
+    // ---------- 单一数据源：从 localStorage 恢复 ----------
+    let todos = load();
+
+    // ---------- 持久化：存 / 取 ----------
+    function save() {
+      localStorage.setItem(KEY, JSON.stringify(todos));
+    }
+
+    function load() {
+      const raw = localStorage.getItem(KEY);
+      if (raw === null) return [];
+      return JSON.parse(raw);
+    }
+
+    // ---------- 渲染：根据 todos 重画整个列表 ----------
+    function render() {
+      list.innerHTML = '';
+      todos.forEach(t => {
+        const li = document.createElement('li');
+        li.className = 'todo-list__item';
+        li.dataset.id = t.id;
+        if (t.completed) li.classList.add('done');
+        li.textContent = t.text;
+        li.addEventListener('click', () => toggleTodo(t.id));
+
+        const delBtn = document.createElement('button');
+        delBtn.textContent = '×';
+        delBtn.addEventListener('click', () => removeTodo(t.id));
+        li.appendChild(delBtn);
+
+        list.appendChild(li);
+      });
+    }
+
+    // ---------- 添加 ----------
+    function addTodo(text) {
+      const item = { id: Date.now(), text, completed: false };
+      todos.push(item);
+      save();
+      render();
+    }
+
+    // ---------- 删除 ----------
+    function removeTodo(id) {
+      const index = todos.findIndex(t => t.id === id);
+      todos.splice(index, 1);
+      save();
+      render();
+    }
+
+    // ---------- 切换完成状态 ----------
+    function toggleTodo(id) {
+      const t = todos.find(t => t.id === id);
+      t.completed = !t.completed;
+      save();
+      render();
+    }
+
+    // ---------- 事件绑定 ----------
+    addBtn.addEventListener('click', () => {
+      const text = input.value.trim();
+      if (text === '') return;
+      addTodo(text);
+      input.value = '';
+      input.focus();
+    });
+
+    // ---------- 首次渲染 ----------
+    render();
+  </script>
+</body>
+
+</html>
