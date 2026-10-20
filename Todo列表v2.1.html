@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Todo 列表 · V2.1 事件委托版</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 40px 16px;
+      font-family: system-ui, -apple-system, "Segoe UI", "PingFang SC", sans-serif;
+      background: #f5f6f8;
+      color: #333;
+    }
+
+    .todo-app {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 24px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .todo-app__title {
+      margin: 0 0 20px;
+      font-size: 20px;
+      text-align: center;
+    }
+
+    .todo-input-area {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .todo-input-area__input {
+      flex: 1;
+      padding: 10px 12px;
+      font-size: 15px;
+      border: 1px solid #d9d9d9;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .todo-input-area__input:focus {
+      border-color: #4a90e2;
+    }
+
+    .todo-input-area__btn {
+      padding: 10px 20px;
+      font-size: 15px;
+      color: #fff;
+      background: #4a90e2;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .todo-input-area__btn:hover {
+      background: #3a7bc8;
+    }
+
+    /* 筛选栏：视图状态切换 */
+    .todo-filter {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .todo-filter__btn {
+      flex: 1;
+      padding: 6px 0;
+      font-size: 13px;
+      color: #555;
+      background: #f0f2f5;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .todo-filter__btn:hover {
+      border-color: #4a90e2;
+      color: #4a90e2;
+    }
+
+    .todo-filter__btn.is-active {
+      background: #4a90e2;
+      border-color: #4a90e2;
+      color: #fff;
+    }
+
+    .todo-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .todo-list__item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      font-size: 15px;
+      line-height: 1.5;
+      background: #fafafa;
+      border-left: 3px solid #4a90e2;
+      border-radius: 6px;
+      cursor: pointer;
+      word-break: break-all;
+    }
+
+    /* 已完成状态：淡化 + 文字删除线 */
+    .todo-list__item.done {
+      opacity: 0.55;
+    }
+
+    .todo-list__item.done .todo-list__text {
+      text-decoration: line-through;
+    }
+
+    .todo-list__empty {
+      padding: 16px 0;
+      font-size: 13px;
+      color: #999;
+      text-align: center;
+    }
+
+    .todo-list__del {
+      flex-shrink: 0;
+      margin-left: 8px;
+      width: 22px;
+      height: 22px;
+      font-size: 13px;
+      line-height: 1;
+      color: #999;
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .todo-list__del:hover {
+      color: #fff;
+      background: #e74c3c;
+      border-color: #e74c3c;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="todo-app">
+    <h1 class="todo-app__title">Todo 列表 · V2.1</h1>
+
+    <!-- 输入区：文本框 + 添加按钮 -->
+    <div class="todo-input-area">
+      <input id="todo-input" class="todo-input-area__input" type="text" placeholder="请输入待办内容" />
+      <button id="add-btn" class="todo-input-area__btn" type="button">添加</button>
+    </div>
+
+    <!-- 筛选栏：视图状态切换（all / active / done） -->
+    <div class="todo-filter">
+      <button class="todo-filter__btn is-active" type="button" data-filter="all">全部</button>
+      <button class="todo-filter__btn" type="button" data-filter="active">未完成</button>
+      <button class="todo-filter__btn" type="button" data-filter="done">已完成</button>
+    </div>
+
+    <!-- Todo 列表专属容器：所有 li 均由 render() 生成，监听器只绑在这一层 -->
+    <ul id="todo-list" class="todo-list"></ul>
+  </div>
+
+  <!-- 脚本置于 body 末尾，保证执行时 DOM 已全部就绪 -->
+  <script>
+    // ---------- 常量与 DOM 引用 ----------
+    const KEY = 'todos';
+    const list = document.querySelector('#todo-list');
+    const input = document.querySelector('#todo-input');
+    const addBtn = document.querySelector('#add-btn');
+    const filterBtns = document.querySelectorAll('.todo-filter__btn');
+
+    // ---------- 单一数据源 + 视图状态 ----------
+    let todos = load();   // 任务状态：唯一的待办数据来源
+    let filter = 'all';   // 视图状态：all / active / done（不需要持久化）
+
+    // ---------- 持久化：存 / 取 ----------
+    function save() {
+      localStorage.setItem(KEY, JSON.stringify(todos));
+    }
+
+    function load() {
+      const raw = localStorage.getItem(KEY);
+      if (raw === null) return [];
+      try {
+        const data = JSON.parse(raw);
+        return Array.isArray(data) ? data : []; // 防御：损坏或非数组时回退空数组
+      } catch (e) {
+        return []; // JSON 解析失败不抛异常，保证页面可恢复
+      }
+    }
+
+    // ---------- 渲染：只负责「画」，既不绑监听器也不手动改 DOM ----------
+    function render() {
+      list.innerHTML = ''; // 清空 → 重画（DOM 是数据的投影）
+
+      // 先过滤，决定「显示哪些」——只影响视图，不改 todos 本身
+      const shown = todos.filter(t =>
+        filter === 'all' ? true :
+        filter === 'done' ? t.completed : !t.completed);
+
+      // 空状态提示
+      if (shown.length === 0) {
+        const empty = document.createElement('li');
+        empty.className = 'todo-list__empty';
+        empty.textContent = filter === 'done' ? '还没有已完成的任务' : '暂无待办，添加一条吧';
+        list.appendChild(empty);
+      }
+
+      shown.forEach(t => {
+        const li = document.createElement('li');
+        li.className = 'todo-list__item';
+        li.dataset.id = t.id; // ① 把「我是谁」写进 DOM，点击时靠它反查
+        if (t.completed) li.classList.add('done');
+
+        // 文字单独放 span，便于对已完成项加删除线
+        const text = document.createElement('span');
+        text.className = 'todo-list__text';
+        text.textContent = t.text;
+
+        const delBtn = document.createElement('button');
+        delBtn.className = 'todo-list__del';
+        delBtn.type = 'button';
+        delBtn.dataset.action = 'delete'; // ② 把「干什么」写进 DOM
+        delBtn.textContent = '×';
+
+        li.append(text, delBtn);
+        list.appendChild(li);
+        // 注意：这里不再出现任何 addEventListener —— 交给父容器统一接管
+      });
+
+      // 同步筛选按钮的选中样式
+      filterBtns.forEach(btn => {
+        btn.classList.toggle('is-active', btn.dataset.filter === filter);
+      });
+    }
+
+    // ---------- 添加：展开运算符合并新任务，生成新数组 ----------
+    function addTodo(text) {
+      todos = [...todos, { id: Date.now(), text, completed: false }];
+      save();
+      render();
+    }
+
+    // ---------- 删除：filter 留下 id 不匹配的，生成新数组 ----------
+    function removeTodo(id) {
+      todos = todos.filter(t => t.id !== id);
+      save();
+      render();
+    }
+
+    // ---------- 切换完成状态：map + 展开，只改匹配的那一条 ----------
+    function toggleTodo(id) {
+      todos = todos.map(t =>
+        t.id === id ? { ...t, completed: !t.completed } : t);
+      save();
+      render();
+    }
+
+    // ---------- 删除所有已完成任务 ----------
+    function clearCompleted() {
+      todos = todos.filter(t => !t.completed);
+      save();
+      render();
+    }
+
+    // ---------- 视图状态切换：只重渲染，不需要 save() ----------
+    function setFilter(f) {
+      filter = f; // all / active / done
+      render();   // filter 是视图状态，刷新后回到默认 'all'
+    }
+
+    // ---------- 输入区事件 ----------
+    addBtn.addEventListener('click', () => {
+      const text = input.value.trim();
+      if (text === '') return; // 空输入（含纯空格）禁止添加
+      addTodo(text);
+      input.value = '';
+      input.focus();
+    });
+
+    // 筛选：三个硬编码按钮，点击切换视图状态
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => setFilter(btn.dataset.filter));
+    });
+
+    // ---------- 首次渲染 ----------
+    render();
+  </script>
+</body>
+
+</html>
