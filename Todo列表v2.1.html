@@ -260,7 +260,8 @@
     }
 
     // ---------- 删除：filter 留下 id 不匹配的，生成新数组 ----------
-    function removeTodo(id) {
+    function deleteTodo(id) {
+      console.log('[delete]', id);
       todos = todos.filter(t => t.id !== id);
       save();
       render();
@@ -268,6 +269,7 @@
 
     // ---------- 切换完成状态：map + 展开，只改匹配的那一条 ----------
     function toggleTodo(id) {
+      console.log('[toggle]', id);
       todos = todos.map(t =>
         t.id === id ? { ...t, completed: !t.completed } : t);
       save();
@@ -286,6 +288,28 @@
       filter = f; // all / active / done
       render();   // filter 是视图状态，刷新后回到默认 'all'
     }
+
+    // ---------- 父容器统一接管：一个监听器处理所有 li ----------
+    list.addEventListener('click', (e) => {
+      // 防御 ①：target 不一定是 Element（可能是文本节点等），先挡住
+      if (!(e.target instanceof Element)) return;
+
+      // 用 e.target 反查它属于哪一条 li —— target 是按钮，id 在 li 上
+      const item = e.target.closest('li');
+      // 防御 ②：closest() 可能返回 null（点列表空白处），必须挡在读属性之前
+      if (!item || !list.contains(item)) return;
+
+      // dataset.id 读出来是字符串，而 todos 里的 id 是数字，必须转换后才能比较
+      const id = Number(item.dataset.id);
+      // 防御 ③：id 转换失败（NaN）直接退出，不把脏数据带进数据层
+      if (!Number.isFinite(id)) return;
+
+      const delBtn = e.target.closest('[data-action="delete"]');
+      if (delBtn && item.contains(delBtn)) {
+        deleteTodo(id);
+      }
+      toggleTodo(id);
+    });
 
     // ---------- 输入区事件 ----------
     addBtn.addEventListener('click', () => {
