@@ -135,6 +135,11 @@
       text-align: center;
     }
 
+    .todo-list__text {
+      flex: 1;
+    }
+
+    .todo-list__edit,
     .todo-list__del {
       flex-shrink: 0;
       margin-left: 8px;
@@ -147,6 +152,12 @@
       border: 1px solid #e0e0e0;
       border-radius: 50%;
       cursor: pointer;
+    }
+
+    .todo-list__edit:hover {
+      color: #fff;
+      background: #4a90e2;
+      border-color: #4a90e2;
     }
 
     .todo-list__del:hover {
@@ -235,13 +246,19 @@
         text.className = 'todo-list__text';
         text.textContent = t.text;
 
+        const editBtn = document.createElement('button');
+        editBtn.className = 'todo-list__edit';
+        editBtn.type = 'button';
+        editBtn.dataset.action = 'edit'; // ② 把「干什么」写进 DOM
+        editBtn.textContent = '改';
+
         const delBtn = document.createElement('button');
         delBtn.className = 'todo-list__del';
         delBtn.type = 'button';
         delBtn.dataset.action = 'delete'; // ② 把「干什么」写进 DOM
         delBtn.textContent = '×';
 
-        li.append(text, delBtn);
+        li.append(text, editBtn, delBtn);
         list.appendChild(li);
         // 注意：这里不再出现任何 addEventListener —— 交给父容器统一接管
       });
@@ -276,6 +293,25 @@
       render();
     }
 
+    // ---------- 编辑：只替换 text，仍然「改数据 → save → render」且不改原数组 ----------
+    function updateTodo(id, text) {
+      todos = todos.map(t => (t.id === id ? { ...t, text } : t));
+      save();
+      render();
+    }
+
+    // ---------- 编辑入口：取当前文本 → 输入新文本 → 边界校验 → 写回 ----------
+    function editTodo(id) {
+      const cur = todos.find(t => t.id === id);
+      if (!cur) return;                        // 边界：id 已失效（例如连点两次）
+      const next = prompt('修改任务内容', cur.text);
+      if (next === null) return;               // 边界：点「取消」，不改数据
+      const text = next.trim();
+      if (text === '') return;                 // 边界：空输入 / 纯空格，直接拦住
+      if (text === cur.text) return;           // 没有实际改动，不必写数据
+      updateTodo(id, text);
+    }
+
     // ---------- 删除所有已完成任务 ----------
     function clearCompleted() {
       todos = todos.filter(t => !t.completed);
@@ -305,10 +341,16 @@
       if (!Number.isFinite(id)) return;
 
       const delBtn = e.target.closest('[data-action="delete"]');
+      const editBtn = e.target.closest('[data-action="edit"]');
+
+      // 一次点击只能对应一种操作：删除 / 编辑 / 切换三者互斥
       if (delBtn && item.contains(delBtn)) {
         deleteTodo(id);
+      } else if (editBtn && item.contains(editBtn)) {
+        editTodo(id);
+      } else {
+        toggleTodo(id);
       }
-      toggleTodo(id);
     });
 
     // ---------- 输入区事件 ----------
