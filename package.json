@@ -1,0 +1,17 @@
+{
+  "name": "todo-ts",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "W9 实验：V2.1 Todo 的 TypeScript 重构与单元测试",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4",
+    "vitest": "^2.1.9"
+  }
+}
