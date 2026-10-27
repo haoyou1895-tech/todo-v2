@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Todo 列表 · V3.0 TypeScript 重构版</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 40px 16px;
+      font-family: system-ui, -apple-system, "Segoe UI", "PingFang SC", sans-serif;
+      background: #f5f6f8;
+      color: #333;
+    }
+
+    .todo-app {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 24px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .todo-app__title {
+      margin: 0 0 20px;
+      font-size: 20px;
+      text-align: center;
+    }
+
+    .todo-input-area {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .todo-input-area__input {
+      flex: 1;
+      padding: 10px 12px;
+      font-size: 15px;
+      border: 1px solid #d9d9d9;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .todo-input-area__input:focus { border-color: #4a90e2; }
+
+    .todo-input-area__btn {
+      padding: 10px 20px;
+      font-size: 15px;
+      color: #fff;
+      background: #4a90e2;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .todo-input-area__btn:hover { background: #3a7bc8; }
+
+    .todo-filter {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .todo-filter__btn {
+      flex: 1;
+      padding: 6px 0;
+      font-size: 13px;
+      color: #555;
+      background: #f0f2f5;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .todo-filter__btn:hover { border-color: #4a90e2; color: #4a90e2; }
+
+    .todo-filter__btn.is-active {
+      background: #4a90e2;
+      border-color: #4a90e2;
+      color: #fff;
+    }
+
+    .todo-list { margin: 0; padding: 0; list-style: none; }
+
+    .todo-list__item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      font-size: 15px;
+      line-height: 1.5;
+      background: #fafafa;
+      border-left: 3px solid #4a90e2;
+      border-radius: 6px;
+      cursor: pointer;
+      word-break: break-all;
+    }
+
+    .todo-list__item.done { opacity: 0.55; }
+
+    .todo-list__item.done .todo-list__text { text-decoration: line-through; }
+
+    .todo-list__empty {
+      padding: 16px 0;
+      font-size: 13px;
+      color: #999;
+      text-align: center;
+    }
+
+    .todo-list__text { flex: 1; }
+
+    .todo-list__edit,
+    .todo-list__del {
+      flex-shrink: 0;
+      margin-left: 8px;
+      width: 22px;
+      height: 22px;
+      font-size: 13px;
+      line-height: 1;
+      color: #999;
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .todo-list__edit:hover { color: #fff; background: #4a90e2; border-color: #4a90e2; }
+
+    .todo-list__del:hover { color: #fff; background: #e74c3c; border-color: #e74c3c; }
+  </style>
+</head>
+
+<body>
+  <div class="todo-app">
+    <h1 class="todo-app__title">Todo 列表 · V3.0 TS</h1>
+
+    <div class="todo-input-area">
+      <input id="todo-input" class="todo-input-area__input" type="text" placeholder="请输入待办内容（最多 100 字）" />
+      <button id="add-btn" class="todo-input-area__btn" type="button">添加</button>
+    </div>
+
+    <div class="todo-filter">
+      <button class="todo-filter__btn is-active" type="button" data-filter="all">全部</button>
+      <button class="todo-filter__btn" type="button" data-filter="active">未完成</button>
+      <button class="todo-filter__btn" type="button" data-filter="done">已完成</button>
+    </div>
+
+    <ul id="todo-list" class="todo-list"></ul>
+  </div>
+
+  <!-- 由 npm run build 生成（tsc -p tsconfig.build.json → dist/） -->
+  <script type="module" src="./dist/main.js"></script>
+</body>
+
+</html>
