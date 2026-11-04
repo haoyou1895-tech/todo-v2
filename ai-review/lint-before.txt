@@ -1,0 +1,10 @@
+D:\...AAA学习\基于web的编程\web编程第10周\todo-ts\src\legacy\processTodoAction.ts:16:15: 'Todo' is defined but never used. [Error/@typescript-eslint/no-unused-vars]
+D:\...AAA学习\基于web的编程\web编程第10周\todo-ts\src\legacy\processTodoAction.ts:18:8: Function 'processTodoAction' has a complexity of 19. Maximum allowed is 10. [Error/complexity]
+D:\...AAA学习\基于web的编程\web编程第10周\todo-ts\src\legacy\processTodoAction.ts:18:42: Unexpected any. Specify a different type. [Error/@typescript-eslint/no-explicit-any]
+D:\...AAA学习\基于web的编程\web编程第10周\todo-ts\src\legacy\processTodoAction.ts:18:74: Unexpected any. Specify a different type. [Error/@typescript-eslint/no-explicit-any]
+D:\...AAA学习\基于web的编程\web编程第10周\todo-ts\src\legacy\processTodoAction.ts:18:80: Unexpected any. Specify a different type. [Error/@typescript-eslint/no-explicit-any]
+D:\...AAA学习\基于web的编程\web编程第10周\todo-ts\src\legacy\processTodoAction.ts:24:9: Blocks are nested too deeply (4). Maximum allowed is 3. [Error/max-depth]
+D:\...AAA学习\基于web的编程\web编程第10周\todo-ts\src\legacy\processTodoAction.ts:39:9: Blocks are nested too deeply (4). Maximum allowed is 3. [Error/max-depth]
+D:\...AAA学习\基于web的编程\web编程第10周\todo-ts\src\legacy\processTodoAction.ts:51:9: Blocks are nested too deeply (4). Maximum allowed is 3. [Error/max-depth]
+
+8 problems

@@ -157,8 +157,13 @@
     <ul id="todo-list" class="todo-list"></ul>
   </div>
 
-  <!-- 由 npm run build 生成（tsc -p tsconfig.build.json → dist/） -->
-  <script type="module" src="./dist/main.js"></script>
+  <!--
+    Vite 的入口是 HTML，不是 main.ts：
+    dev 时 dev server 直接把这份 HTML 返回给浏览器，浏览器再去请求 /src/main.ts，由 Node 侧即时编译；
+    build 时 Rollup 以这里为起点打包，产物进 dist/。
+    （W9 那版写的是 ./dist/main.js，属于「先 tsc 再手动打开页面」，不是 Vite 工程）
+  -->
+  <script type="module" src="/src/main.ts"></script>
 </body>
 
 </html>

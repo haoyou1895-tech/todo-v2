@@ -18,6 +18,13 @@ import {
 
 const STORAGE_KEY = 'todos';
 
+/**
+ * W10：环境配置从 .env 读，不再硬编码在代码里。
+ * 注意它并不是「运行时向服务器请求变量」—— Vite 在 dev 响应模块 / build 打包时
+ * 就把这句话替换成字面量了，产物里只有值、没有变量名（课件 P7-P8）。
+ */
+document.title = import.meta.env.VITE_APP_TITLE;
+
 function getListElement(): HTMLUListElement {
   const el = document.querySelector('#todo-list');
   if (!(el instanceof HTMLUListElement)) {

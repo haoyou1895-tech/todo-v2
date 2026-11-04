@@ -1,4 +1,12 @@
 node_modules/
 dist/
+coverage/
 *.log
 .DS_Store
+
+# 本地环境配置不进 Git：模板用 .env.example
+.env
+.env.local
+.env.*.local
+.tmp/
+.tmp/
