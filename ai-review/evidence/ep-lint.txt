@@ -1,0 +1,7 @@
+$ npx eslint src/
+[exit=0]
+
+$ npx eslint src/ -f json  # 汇总真实的 error / warning 计数
+lint 检查文件数: 7
+error: 0  warning: 0
+✔ V3.0 要求达成（0 error，warning ≤ 3）

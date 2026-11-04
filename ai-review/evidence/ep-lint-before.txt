@@ -1,0 +1,15 @@
+$ npx eslint src/
+
+D:\...AAA学习\基于web的编程\web编程第10周\todo-ts\src\legacy\processTodoAction.ts
+  16:15  error  'Todo' is defined but never used                                            @typescript-eslint/no-unused-vars
+  18:8   error  Function 'processTodoAction' has a complexity of 19. Maximum allowed is 10  complexity
+  18:42  error  Unexpected any. Specify a different type                                    @typescript-eslint/no-explicit-any
+  18:74  error  Unexpected any. Specify a different type                                    @typescript-eslint/no-explicit-any
+  18:80  error  Unexpected any. Specify a different type                                    @typescript-eslint/no-explicit-any
+  24:9   error  Blocks are nested too deeply (4). Maximum allowed is 3                      max-depth
+  39:9   error  Blocks are nested too deeply (4). Maximum allowed is 3                      max-depth
+  51:9   error  Blocks are nested too deeply (4). Maximum allowed is 3                      max-depth
+
+✖ 8 problems (8 errors, 0 warnings)
+
+[exit=1]

@@ -1,0 +1,17 @@
+$ npm run test
+
+> todo-ts@1.0.0 test
+> vitest run
+
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mD:/...AAA学习/基于web的编程/web编程第10周/todo-ts[39m
+
+ [32m✓[39m src/todo.ai-fixed.test.ts [2m([22m[2m5 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+ [32m✓[39m src/legacy/processTodoAction.test.ts [2m([22m[2m9 tests[22m[2m)[22m[90m 4[2mms[22m[39m
+ [32m✓[39m src/todo.test.ts [2m([22m[2m19 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[32m33 passed[39m[22m[90m (33)[39m
+[2m   Start at [22m 16:05:14
+[2m   Duration [22m 1.02s[2m (transform 88ms, setup 0ms, collect 220ms, tests 15ms, environment 0ms, prepare 1.45s)[22m
+

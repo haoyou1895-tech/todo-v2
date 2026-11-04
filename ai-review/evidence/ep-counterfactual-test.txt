@@ -1,0 +1,40 @@
+$ npm run test
+
+> todo-ts@1.0.0 test
+> vitest run
+
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mD:/...AAA学习/基于web的编程/web编程第10周/todo-ts[39m
+
+ [32m✓[39m src/todo.ai-fixed.test.ts [2m([22m[2m5 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+ [32m✓[39m src/todo.test.ts [2m([22m[2m19 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+ [31m❯[39m src/legacy/processTodoAction.test.ts [2m([22m[2m9 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[90m 7[2mms[22m[39m
+[31m   [31m×[31m processTodoAction / add[2m > [22m纯空白：必须拦住，长度不变[90m 4[2mms[22m[31m[39m
+[31m     → expected 3 to be 2 // Object.is equality[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 1 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m src/legacy/processTodoAction.test.ts[2m > [22mprocessTodoAction / add[2m > [22m纯空白：必须拦住，长度不变
+[31m[1mAssertionError[22m: expected 3 to be 2 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 2[39m
+[31m+ 3[39m
+
+[36m [2m❯[22m src/legacy/processTodoAction.test.ts:[2m34:25[22m[39m
+    [90m 32| [39m    [35mconst[39m todos [33m=[39m [34mseed[39m()[33m;[39m
+    [90m 33| [39m    [35mconst[39m next [33m=[39m [34mprocessTodoAction[39m(todos[33m,[39m [32m'add'[39m[33m,[39m { text[33m:[39m [32m'   '[39m })[33m;[39m
+    [90m 34| [39m    [34mexpect[39m(next[33m.[39mlength)[33m.[39m[34mtoBe[39m([34m2[39m)[33m;[39m
+    [90m   | [39m                        [31m^[39m
+    [90m 35| [39m  })[33m;[39m
+    [90m 36| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m32 passed[39m[22m[90m (33)[39m
+[2m   Start at [22m 16:06:02
+[2m   Duration [22m 494ms[2m (transform 79ms, setup 0ms, collect 179ms, tests 15ms, environment 0ms, prepare 421ms)[22m
+
