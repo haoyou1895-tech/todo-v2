@@ -8,5 +8,6 @@ coverage/
 .env
 .env.local
 .env.*.local
-.tmp/
+
+# vitest 依赖预构建缓存
 .tmp/
