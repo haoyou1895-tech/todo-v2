@@ -17,6 +17,7 @@ import {
   removeTodo,
   toggleTodo,
   todosFromUnknown,
+  updateTodo,
   type Todo,
 } from './todo';
 
@@ -213,5 +214,78 @@ describe('nextTodoId', () => {
 
     expect(id).toBe(1_700_000_000_000);
     expect(Number.isSafeInteger(id)).toBe(true);
+  });
+});
+
+/**
+ * 回归：修改功能。
+ *
+ * 这一组是「改了没生效」这个线上缺陷的钉子。根因是 handleEdit 用「数组长度有没有变」
+ * 判断输入是否合法 —— 而「删旧 + 加新」的成功路径长度恰好不变，判断方向正好反了：
+ * 合法输入被拦掉（改了不生效），非法输入反而通过（任务被删掉）。
+ * 所以下面第一条专门断言「修改后长度与原长度相同」，把这件事固定成预期行为，
+ * 以后谁再想拿长度当成功信号，这条测试会立刻红给他看。
+ */
+describe('updateTodo', () => {
+  const two: Todo[] = [
+    { id: 1, text: '好好喝', completed: false },
+    { id: 2, text: '明早去浇花', completed: false },
+  ];
+
+  test('正常修改：文本被替换，长度不变（不能用长度判断成败）', () => {
+    const next = updateTodo(two, 1, '好好喝水');
+
+    expect(next.length).toBe(two.length);
+    expect(next[0].text).toBe('好好喝水');
+  });
+
+  test('正常修改：位置和 id 都不变，不跳到列表末尾', () => {
+    const next = updateTodo(two, 1, '好好喝水');
+
+    expect(next[0].id).toBe(1);
+    expect(next[0].text).toBe('好好喝水');
+    expect(next[1].text).toBe('明早去浇花');
+  });
+
+  test('正常修改：已完成状态被保留，不因改文本被重置', () => {
+    const done: Todo[] = [{ id: 1, text: '已办的事', completed: true }];
+
+    const next = updateTodo(done, 1, '改个错别字');
+
+    expect(next[0].text).toBe('改个错别字');
+    expect(next[0].completed).toBe(true);
+  });
+
+  test('首尾空白：trim 后再入库', () => {
+    const next = updateTodo(two, 1, '  好好喝水  ');
+
+    expect(next[0].text).toBe('好好喝水');
+  });
+
+  test('纯空格：拒绝，文本保持原样，长度不变', () => {
+    const next = updateTodo(two, 1, '   ');
+
+    expect(next.length).toBe(2);
+    expect(next[0].text).toBe('好好喝');
+  });
+
+  test(`超过 ${MAX_TEXT_LENGTH} 字：拒绝，文本保持原样`, () => {
+    const next = updateTodo(two, 1, 'a'.repeat(MAX_TEXT_LENGTH + 1));
+
+    expect(next[0].text).toBe('好好喝');
+  });
+
+  test('id 不存在：谁都没被改，长度不变', () => {
+    const next = updateTodo(two, 999, '新内容');
+
+    expect(next.length).toBe(2);
+    expect(next[0].text).toBe('好好喝');
+    expect(next[1].text).toBe('明早去浇花');
+  });
+
+  test('不修改传入的原数组（不可变约束）', () => {
+    updateTodo(two, 1, '好好喝水');
+
+    expect(two[0].text).toBe('好好喝');
   });
 });

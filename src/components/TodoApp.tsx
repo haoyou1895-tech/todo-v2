@@ -18,6 +18,7 @@ import {
   parseStoredTodos,
   removeTodo,
   toggleTodo,
+  updateTodo,
   type Todo,
 } from '../todo';
 import TodoForm from './TodoForm';
@@ -90,13 +91,19 @@ export default function TodoApp() {
       const current = todos.find((t) => t.id === id);
       if (current === undefined) return;
 
-      // 改内容 = 删旧 + 按原 id 插新，复用纯函数，保证 trim / 100 字两条规则同样生效。
+      // 改内容的写法：调 updateTodo 原地替换。
+      // 【教训】原先是「删旧 + 按原 id 加新」，配一句 `if (next.length === todos.length) return;`
+      // 想表达「长度没变 = 输入非法」。可删一条 -1、加一条 +1，合法输入时长度恰好又回到原值 ——
+      // 于是合法输入被判成非法直接 return（改了不生效），
+      // 而非法输入时长度是 n-1，反而通过守卫写盘，等于把这条任务删掉。
+      // 修改操作本来就没有长度变化，不该用长度当成功信号。
       const input = window.prompt('修改任务内容', current.text);
-      if (input === null) return;
+      if (input === null) return; // 点了取消
 
-      const next = addTodo(removeTodo(todos, id), input, id);
-      // 长度没变说明输入非法（空 / 超长），保持原状 —— 与 V3 行为一致。
-      if (next.length === todos.length) return;
+      const next = updateTodo(todos, id, input);
+      const updated = next.find((t) => t.id === id);
+      // 文本没变 = 输入非法（空 / 超长 / 没改动），不写盘，保持原状。
+      if (updated === undefined || updated.text === current.text) return;
 
       setTodos(next);
     },

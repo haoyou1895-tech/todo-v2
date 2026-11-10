@@ -63,8 +63,8 @@ src/
 │  ├─ TodoList.tsx         筛选结果 + 空状态文案，只负责「排布局」
 │  └─ TodoItem.tsx         单条渲染，memo 化，按钮自己 stopPropagation
 ├─ main.tsx                入口：createRoot 挂到 #root
-├─ todo.ts                 业务纯函数（W9 起没动过，W11 只加了 nextTodoId）
-├─ todo.test.ts            21 条（原 19 条零改动 + W11 追加 id 唯一性 2 条）
+├─ todo.ts                 业务纯函数（W9 起没动过，W11 加了 nextTodoId / updateTodo）
+├─ todo.test.ts            29 条（原 19 条零改动 + id 唯一性 2 条 + 修改功能回归 8 条）
 └─ legacy/main-dom.ts      W9 的原生 DOM 视图层，已退役，仅作 diff 证据
 ```
 
@@ -89,6 +89,28 @@ src/
 
 ```bash
 npm run dev    # 开发（HMR）
-npm run test   # 35 条单测
+npm run test   # 43 条单测（含历史存档 14 条）
 npm run build  # tsc --noEmit && vite build
 ```
+
+### W11 修复：修改按钮点了没反应
+
+**现象**：点「改」、输入新内容、按确定 —— 界面没变化。更糟的是输入空内容按确定，那条任务直接消失。
+
+**根因**：`handleEdit` 用「数组长度有没有变」判断输入是否合法：
+
+```ts
+const next = addTodo(removeTodo(todos, id), input, id);  // 删一条 -1，加一条 +1
+if (next.length === todos.length) return;                // 判反了
+```
+
+合法输入时长度恰好回到原值 → 被当成非法，`return` 掉，改了不生效；
+非法输入时长度是 `n-1` → 反而通过守卫写盘，等于把这条任务删了。
+
+**修法**：新增纯函数 `updateTodo`，命中项原地替换（位置、id、completed 都不动），
+调用方改用「文本有没有真的变」判断成败。修改操作本来就没有长度变化，长度不该当成功信号。
+
+**为什么测试没挡住**：原来的验收只覆盖了添加 / 切换 / 删除 / 筛选，
+没有一条点过「改」—— 19 项断言全绿，坏的那条路径一次都没被走到。
+修完补了 8 条回归测试（`describe('updateTodo')`）+ 11 项浏览器断言，其中第一条专门断言「修改后长度不变」，
+把这件事钉成预期行为。

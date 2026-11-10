@@ -1,0 +1,58 @@
+$ npx vitest run src/tmp-repro-edit.test.ts
+
+ RUN  v2.1.9 D:/...AAA学习/基于web的编程/web编程第10周/todo-ts
+
+stdout | src/tmp-repro-edit.test.ts > 复现 A：合法输入，改完应该更新
+  A 输入「好好喝水」→ ["好好喝","明早去浇花"]
+
+stdout | src/tmp-repro-edit.test.ts > 复现 B：空输入，应该原样不动
+  B 输入「空格」  → ["明早去浇花"]
+
+ ❯ src/tmp-repro-edit.test.ts (2 tests | 2 failed) 8ms
+   × 复现 A：合法输入，改完应该更新 5ms
+     → expected '好好喝' to be '好好喝水' // Object.is equality
+   × 复现 B：空输入，应该原样不动 2ms
+     → expected 1 to be 2 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/tmp-repro-edit.test.ts > 复现 A：合法输入，改完应该更新
+AssertionError: expected '好好喝' to be '好好喝水' // Object.is equality
+
+Expected: "好好喝水"
+Received: "好好喝"
+
+ ❯ src/tmp-repro-edit.test.ts:19:24
+     17|   const next = editLikeShipped(base, 1, '好好喝水');
+     18|   console.log('  A 输入「好好喝水」→', JSON.stringify(next.map((t) => …
+     19|   expect(next[0].text).toBe('好好喝水');
+       |                        ^
+     20| });
+     21| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/tmp-repro-edit.test.ts > 复现 B：空输入，应该原样不动
+AssertionError: expected 1 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 1
+
+ ❯ src/tmp-repro-edit.test.ts:25:23
+     23|   const next = editLikeShipped(base, 1, '   ');
+     24|   console.log('  B 输入「空格」  →', JSON.stringify(next.map((t) => t.…
+     25|   expect(next.length).toBe(2);
+       |                       ^
+     26| });
+     27| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  15:15:00
+   Duration  499ms (transform 43ms, setup 0ms, collect 57ms, tests 8ms, environment 0ms, prepare 166ms)
+

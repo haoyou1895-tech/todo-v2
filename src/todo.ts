@@ -111,6 +111,34 @@ export function toggleTodo(todos: readonly Todo[], id: number): Todo[] {
 }
 
 /**
+ * W11 修复：修改单条文本。
+ *
+ * 为什么不复用「删除 + 添加」：那条路上有两个坑，而且两个都踩了。
+ * 1. 删除后长度 -1、再添加又 +1，合法输入时长度恰好回到原值 ——
+ *    所以「用长度有没有变化来判断成败」这件事，在修改场景里方向是反的。
+ * 2. 添加永远追加到数组末尾，改一个错别字就会让这条任务跳到列表最下面。
+ *
+ * 所以单独给一个函数：命中项原地替换，位置和 id 都不动；
+ * 非法输入返回「内容相同的新副本」，与 addTodo / toggleTodo 同一个契约
+ * （永远返回数组、永不修改入参），调用方靠「文本有没有变」判断成败。
+ */
+export function updateTodo(todos: readonly Todo[], id: number, text: string): Todo[] {
+  if (!Number.isSafeInteger(id) || id <= 0) return [...todos];
+
+  const normalized = normalizeText(text);
+  if (normalized === null) return [...todos];
+
+  let hit = false;
+  const next = todos.map((t) => {
+    if (t.id !== id) return t;
+    hit = true;
+    return { ...t, text: normalized };
+  });
+
+  return hit ? next : [...todos];
+}
+
+/**
  * W11 新增：给新任务分配 id。
  *
  * 为什么要改：V3 一直用 Date.now() 当 id，在「人手慢、一次点一下」的场景下没问题，
