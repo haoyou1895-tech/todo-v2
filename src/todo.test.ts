@@ -11,6 +11,7 @@ import { describe, expect, test } from 'vitest';
 import {
   MAX_TEXT_LENGTH,
   addTodo,
+  nextTodoId,
   parseStoredTodos,
   parseTodoId,
   removeTodo,
@@ -186,5 +187,31 @@ describe('removeTodo', () => {
     expect(next.length).toBe(1);
     expect(next[0].id).toBe(2);
     expect(todos.length).toBe(2);
+  });
+});
+
+/**
+ * W11 追加：id 唯一性。
+ * 这一条不是「重构顺手补的」，是任务 3 审查 AI 修复时发现的真实缺陷——
+ * 它在 handleAdd 里继续用 Date.now() 当 id，同一毫秒连加两条就会撞号。
+ * 期望值来自业务契约「id 必须唯一」，不来自实现。
+ */
+describe('nextTodoId', () => {
+  test('同一毫秒内连续取两次，必须拿到不同 id', () => {
+    const todos: Todo[] = [{ id: 1000, text: 'A', completed: false }];
+
+    const first = nextTodoId(todos, 1000);
+    const afterFirst: Todo[] = [...todos, { id: first, text: 'B', completed: false }];
+    const second = nextTodoId(afterFirst, 1000);
+
+    expect(first).not.toBe(second);
+    expect(second).toBeGreaterThan(first);
+  });
+
+  test('空列表回退到当前时间戳，id 仍为正整数', () => {
+    const id = nextTodoId([], 1_700_000_000_000);
+
+    expect(id).toBe(1_700_000_000_000);
+    expect(Number.isSafeInteger(id)).toBe(true);
   });
 });

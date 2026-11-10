@@ -1,3 +1,4 @@
+import react from '@vitejs/plugin-react';
 import { defineConfig, loadEnv } from 'vite';
 
 /**
@@ -12,6 +13,9 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
   return {
+    // W11：React 插件做两件事 —— dev 时给 tsx 提供 HMR（改组件不刷新页面就生效），
+    // build 时把 JSX 交给 Babel 转成 React.createElement。没有它，.tsx 里的 <div> 语法根本编译不过。
+    plugins: [react()],
     server: {
       port: 5173,
       proxy: {

@@ -1,6 +1,11 @@
 /**
  * W9 实验 · 视图层（DOM 绑定 + 事件委托）
  *
+ * 【W11 状态：已退役】它不再被 index.html 引用，也不再参与打包。
+ * 留着它的理由只有一个：让「改造前长什么样」有据可查，diff 不靠回忆。
+ * 全项目搜 document.querySelector / innerHTML 命中的每一处都在这个文件里 ——
+ * 这本身就是「React 组件层零 DOM 操作」的反向证明。
+ *
  * 与 W8/V2.1 的差别只在于「类型」：
  * 1. 所有 querySelector 结果先 instanceof 收窄到具体元素类型，再使用 —— 不用 `!`、不用 `as`；
  * 2. e.target 是 EventTarget，没有 dataset，先 instanceof Element 收窄；
@@ -14,7 +19,7 @@ import {
   removeTodo,
   toggleTodo,
   type Todo,
-} from './todo';
+} from '../todo';
 
 const STORAGE_KEY = 'todos';
 

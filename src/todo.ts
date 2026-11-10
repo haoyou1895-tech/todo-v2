@@ -110,6 +110,21 @@ export function toggleTodo(todos: readonly Todo[], id: number): Todo[] {
   return todos.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t));
 }
 
+/**
+ * W11 新增：给新任务分配 id。
+ *
+ * 为什么要改：V3 一直用 Date.now() 当 id，在「人手慢、一次点一下」的场景下没问题，
+ * 但 React 的批量更新让「同一毫秒内连加两条」变得很容易（回车连按两下）。
+ * 两条 todo 撞 id 的直接后果是 key 重复，React 会认错节点 —— 删一条，另一条跟着消失。
+ *
+ * 规则：优先用当前时间戳，但如果已有 id 比它还大，就取「最大值 + 1」，保证严格单调递增。
+ * 这样 id 仍然是数字、仍然递增（sort 友好），也仍然有意义（近似创建时间）。
+ */
+export function nextTodoId(todos: readonly Todo[], now: number = Date.now()): number {
+  const maxId = todos.reduce((max, t) => (t.id > max ? t.id : max), 0);
+  return maxId >= now ? maxId + 1 : now;
+}
+
 /** 删除：filter 生成新数组 */
 export function removeTodo(todos: readonly Todo[], id: number): Todo[] {
   if (!Number.isSafeInteger(id)) return [...todos];

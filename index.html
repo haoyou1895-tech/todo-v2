@@ -4,7 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Todo 列表 · V3.0 TypeScript 重构版</title>
+  <!-- 顺手补的：没有 favicon 时每次刷新控制台都会多一条 404，验证据此不干净 -->
+  <link rel="icon" href="data:," />
+  <title>Todo 列表 · V4.0 React 重构版</title>
   <style>
     * { box-sizing: border-box; }
 
@@ -140,30 +142,12 @@
 </head>
 
 <body>
-  <div class="todo-app">
-    <h1 class="todo-app__title">Todo 列表 · V3.0 TS</h1>
-
-    <div class="todo-input-area">
-      <input id="todo-input" class="todo-input-area__input" type="text" placeholder="请输入待办内容（最多 100 字）" />
-      <button id="add-btn" class="todo-input-area__btn" type="button">添加</button>
-    </div>
-
-    <div class="todo-filter">
-      <button class="todo-filter__btn is-active" type="button" data-filter="all">全部</button>
-      <button class="todo-filter__btn" type="button" data-filter="active">未完成</button>
-      <button class="todo-filter__btn" type="button" data-filter="done">已完成</button>
-    </div>
-
-    <ul id="todo-list" class="todo-list"></ul>
-  </div>
-
   <!--
-    Vite 的入口是 HTML，不是 main.ts：
-    dev 时 dev server 直接把这份 HTML 返回给浏览器，浏览器再去请求 /src/main.ts，由 Node 侧即时编译；
-    build 时 Rollup 以这里为起点打包，产物进 dist/。
-    （W9 那版写的是 ./dist/main.js，属于「先 tsc 再手动打开页面」，不是 Vite 工程）
+    W11：这一整块按钮和列表从 HTML 里消失了，只剩一个挂载点。
+    以前这些节点是「我写死在 HTML 里、再用 JS 去改」；
+    现在 DOM 由 React 按 State 生成，HTML 只负责提供容器和样式。
   -->
-  <script type="module" src="/src/main.ts"></script>
-</body>
+  <div id="root"></div>
 
-</html>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
