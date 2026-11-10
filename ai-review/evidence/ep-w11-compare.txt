@@ -1,0 +1,19 @@
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mD:/...AAA学习/基于web的编程/web编程第10周/todo-ts[39m
+
+[90mstdout[2m | src/tmp-compare.test.ts[2m > [22m[2m对照实验
+[22m[39m对照实验：同一个输入，V3 纯函数 与 AI 修复版 各跑一次
+
+输入           | V3 addTodo            | AI 版 handleAdd
+---------------+-----------------------+---------------------------
+"  买牛奶  "      | 入库 "买牛奶"              | 入库 "  买牛奶  "
+"超" ×101       | 拒绝，长度不变               | 入库 101 字（未截断）
+"   "          | 拒绝，长度不变               | 拒绝，长度不变
+
+ [32m✓[39m src/tmp-compare.test.ts [2m([22m[2m1 test[22m[2m)[22m[90m 2[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m   Start at [22m 14:43:27
+[2m   Duration [22m 438ms[2m (transform 36ms, setup 0ms, collect 51ms, tests 2ms, environment 0ms, prepare 132ms)[22m
+
