@@ -1,0 +1,11 @@
+$ grep -rn "document.querySelector\|document.getElementById\|innerHTML" src/
+src/legacy/main-dom.ts:6: * 全项目搜 document.querySelector / innerHTML 命中的每一处都在这个文件里 ——
+src/legacy/main-dom.ts:34:  const el = document.querySelector('#todo-list');
+src/legacy/main-dom.ts:42:  const el = document.querySelector('#todo-input');
+src/legacy/main-dom.ts:50:  const el = document.querySelector('#add-btn');
+src/legacy/main-dom.ts:60:const filterBtns: NodeListOf<HTMLButtonElement> = document.querySelectorAll('.todo-filter__btn');
+src/legacy/main-dom.ts:76:  list.innerHTML = '';
+src/main.tsx:13:const rootElement = document.getElementById('root');
+
+$ grep -rn "document\.\(querySelector\|getElementById\)\|innerHTML" src/components/
+(无命中：0 处)

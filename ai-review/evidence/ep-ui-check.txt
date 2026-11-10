@@ -1,0 +1,26 @@
+== 轨道 B：UI 行为验证（真实浏览器，Edge / Vite dev）
+
+PASS  输入"任务A"点添加 -> 列表项数  ->  实际 1 / 预期 1
+PASS  输入"任务A"点添加 -> 输入框清空  ->  实际 "" / 预期 ""
+PASS  输入"任务A"点添加 -> 页面文本  ->  实际 ["任务A"] / 预期 ["任务A"]
+       控制台打印 todos：[{"id":1794292819453,"text":"任务A","completed":false}]
+PASS  页面列表条数 === localStorage 条数  ->  实际 1 / 预期 1
+PASS  页面文本 === State 里的 text  ->  实际 ["任务A"] / 预期 ["任务A"]
+PASS  纯空白提交 -> 不新增  ->  实际 1 / 预期 1
+PASS  纯空白提交 -> 输入框保留原内容（不逼用户重打）  ->  实际 "   " / 预期 "   "
+PASS  101 字提交 -> 不新增  ->  实际 1 / 预期 1
+PASS  回车提交 -> 列表项数  ->  实际 2 / 预期 2
+PASS  点击任务A -> class 含 done  ->  实际 true / 预期 true
+PASS  点击任务A -> 计算样式出现删除线  ->  实际 true / 预期 true
+PASS  点击任务A后 State 里的 completed  ->  实际 true / 预期 true
+PASS  筛选"未完成" -> 只剩任务B  ->  实际 ["任务B"] / 预期 ["任务B"]
+PASS  筛选"已完成" -> 只剩任务A  ->  实际 ["任务A"] / 预期 ["任务A"]
+PASS  删除任务B -> 列表剩 1 条  ->  实际 1 / 预期 1
+PASS  删除任务B -> State 同步剩 1 条  ->  实际 1 / 预期 1
+PASS  删除任务B -> 任务A 的完成态没被带走（key 唯一性）  ->  实际 "todo-list__item done" / 预期 "todo-list__item done"
+PASS  连加两条 -> id 互不相同  ->  实际 2 / 预期 2
+       ids：[1794292821308,1794292821320]
+
+控制台 error/warning 数量：0
+
+结果：ALL PASS

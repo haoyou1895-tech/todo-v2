@@ -1,0 +1,16 @@
+$ find src -type f | sort
+src/components/TodoApp.tsx
+src/components/TodoForm.tsx
+src/components/TodoItem.tsx
+src/components/TodoList.tsx
+src/legacy/main-dom.ts
+src/legacy/processTodoAction.test.ts
+src/legacy/processTodoAction.ts
+src/main.tsx
+src/todo.ai-fixed.test.ts
+src/todo.test.ts
+src/todo.ts
+src/vite-env.d.ts
+
+$ npx tsc --noEmit && echo "typecheck OK"
+typecheck OK
